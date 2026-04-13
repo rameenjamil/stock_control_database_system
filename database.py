@@ -29,6 +29,7 @@ def create_tables(connection, cursor):
             product_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             size TEXT,
+            quantity INTEGER,
             price REAL,
             category_id INTEGER,
             supplier_id INTEGER,
