@@ -45,3 +45,15 @@ def add_supplier(connection, cursor):
 
     connection.commit()
     print("Supplier added successfully.")
+
+
+def add_clothing_type(connection, cursor):
+    type_name = input("Enter clothing type name: ")
+
+    cursor.execute("""
+                   INSERT INTO clothing_type (type_name)
+        VALUES (?)
+    """, (type_name,))  # comma is needed because it is a tuple
+
+    connection.commit()
+    print("Clothing type added successfully.")

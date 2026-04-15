@@ -17,6 +17,13 @@ def create_tables(connection, cursor):
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS clothing_type (
+            type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type_name TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS supplier (
             supplier_id INTEGER PRIMARY KEY AUTOINCREMENT,
             supplier_name TEXT NOT NULL,
@@ -33,8 +40,10 @@ def create_tables(connection, cursor):
             price REAL,
             category_id INTEGER,
             supplier_id INTEGER,
+            type_id INTEGER,
             FOREIGN KEY (category_id) REFERENCES category(category_id),
-            FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id)
+            FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id),
+            FOREIGN KEY (type_id) REFERENCES clothing_type(type_id)
         )
     ''')
 
