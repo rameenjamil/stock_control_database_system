@@ -34,6 +34,7 @@ def view_products(cursor):
                    FROM product
                    JOIN category ON product.category_id = category.category_id
                    JOIN supplier ON product.supplier_id = supplier.supplier_id
+                   JOIN clothing_type ON product.type_id = clothing_type.type_id
                    """)
 
     results = cursor.fetchall()
