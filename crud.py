@@ -131,3 +131,31 @@ def update_product(connection, cursor):
               Type: {updated[7]}""")
     else:
         print("\nError fetching updated record.")
+
+
+def delete_product(connection, cursor):
+    view_products(cursor)
+
+    try:
+        product_id = int(input("Enter the ID of the product to delete: "))
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+        return
+
+    cursor.execute("SELECT * FROM product WHERE product_id = ?", (product_id,))
+    record = cursor.fetchone()
+
+    if not record:
+        print("Product not found.")
+        return
+
+    confirm = input(
+        "Are you sure you want to delete this product? (y/n): ").lower()
+
+    if confirm == "y":
+        cursor.execute(
+            "DELETE FROM product WHERE product_id = ?", (product_id,))
+        connection.commit()
+        print("Product deleted successfully.")
+    else:
+        print("Deletion cancelled.")

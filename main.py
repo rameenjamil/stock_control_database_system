@@ -1,5 +1,5 @@
 from database import connect_db, create_tables
-from crud import add_product, add_category, add_supplier, add_clothing_type, update_product
+from crud import add_product, add_category, add_supplier, add_clothing_type, update_product, delete_product
 from view import view_products, view_categories, view_suppliers, view_clothing_types
 
 
@@ -46,8 +46,8 @@ def run_app(connection, cursor):
                 view_products(cursor)
             elif action_choice == "3":
                 update_product(connection, cursor)
-            # elif action_choice == "4":
-            #     delete_product(connection, cursor)
+            elif action_choice == "4":
+                delete_product(connection, cursor)
 
         # CATEGORY
         elif table_choice == "2":
