@@ -1,5 +1,7 @@
 from database import connect_db, create_tables
-from crud import add_product, add_category, add_supplier, add_clothing_type, update_product, delete_product
+from crud import (add_product, add_category, add_supplier, add_clothing_type,
+                  update_product,
+                  delete_product, delete_category, delete_supplier, delete_clothing_type)
 from view import view_products, view_categories, view_suppliers, view_clothing_types
 
 
@@ -27,16 +29,24 @@ def run_app(connection, cursor):
     is_running = True
 
     while is_running:
-        main_menu()
-        table_choice = input("Choose table: ")
+        valid_table = False
+        while not valid_table:
+            main_menu()
+            table_choice = input("Choose table: ")
 
-        if table_choice == "5":
-            print("Exiting...")
-            is_running = False
-            continue
+            if table_choice in ["1", "2", "3", "4", "5"]:
+                valid_table = True
+            else:
+                print("Invalid choice. Please select a valid option.")
 
-        action_menu()
-        action_choice = input("Choose action: ")
+        valid_choice = False
+        while not valid_choice:
+            action_menu()
+            action_choice = input("Choose action: ")
+            if action_choice in ["1", "2", "3", "4"]:
+                valid_choice = True
+            else:
+                print("Invalid choice. Please select a valid option.")
 
         # PRODUCT
         if table_choice == "1":
@@ -55,13 +65,16 @@ def run_app(connection, cursor):
                 add_category(connection, cursor)
             elif action_choice == "2":
                 view_categories(cursor)
-
+            elif action_choice == "4":
+                delete_category(connection, cursor)
         # SUPPLIER
         elif table_choice == "3":
             if action_choice == "1":
                 add_supplier(connection, cursor)
             elif action_choice == "2":
                 view_suppliers(cursor)
+            elif action_choice == "4":
+                delete_supplier(connection, cursor)
 
         # CLOTHING TYPE
         elif table_choice == "4":
@@ -69,9 +82,8 @@ def run_app(connection, cursor):
                 add_clothing_type(connection, cursor)
             elif action_choice == "2":
                 view_clothing_types(cursor)
-
-        else:
-            print("Invalid choice.")
+            elif action_choice == "4":
+                delete_clothing_type(connection, cursor)
 
 
 connection, cursor = connect_db()

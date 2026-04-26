@@ -4,6 +4,9 @@ import sqlite3 as db
 def connect_db():
     connection = db.connect("stock.db")
     cursor = connection.cursor()
+
+    cursor.execute("PRAGMA foreign_keys = ON")  # Enable foreign key support
+
     return connection, cursor
 
 
@@ -41,9 +44,9 @@ def create_tables(connection, cursor):
             category_id INTEGER,
             supplier_id INTEGER,
             type_id INTEGER,
-            FOREIGN KEY (category_id) REFERENCES category(category_id),
-            FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id),
-            FOREIGN KEY (type_id) REFERENCES clothing_type(type_id)
+            FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE RESTRICT,
+            FOREIGN KEY (supplier_id) REFERENCES supplier(supplier_id) ON DELETE RESTRICT,
+            FOREIGN KEY (type_id) REFERENCES clothing_type(type_id) ON DELETE RESTRICT
         )
     ''')
 
