@@ -1,17 +1,9 @@
-from crud import (add_product, add_category, add_supplier, add_clothing_type,
+from crud import (add_product, add_category, add_supplier, add_clothing_type, update_category, update_clothing_type,
                   update_product,
-                  delete_product, delete_category, delete_supplier, delete_clothing_type)
+                  delete_product, delete_category, delete_supplier, delete_clothing_type, update_supplier)
 from view import (view_products, view_categories,
                   view_suppliers, view_clothing_types)
-
-
-def get_choice(prompt, options):
-    print(f"\n{prompt}")
-    for option in options:
-        print(option)
-
-    choice = input("Choose an option: ")
-    return choice
+from utility import get_choice
 
 
 def handle_action(table_choice, action_choice, connection, cursor):
@@ -31,7 +23,7 @@ def handle_action(table_choice, action_choice, connection, cursor):
         elif action_choice == "2":
             view_categories(cursor)
         elif action_choice == "3":
-            print("Update not available for categories.")
+            update_category(connection, cursor)
         elif action_choice == "4":
             delete_category(connection, cursor)
 
@@ -41,7 +33,7 @@ def handle_action(table_choice, action_choice, connection, cursor):
         elif action_choice == "2":
             view_suppliers(cursor)
         elif action_choice == "3":
-            print("Update not available for suppliers.")
+            update_supplier(connection, cursor)
         elif action_choice == "4":
             delete_supplier(connection, cursor)
 
@@ -51,7 +43,7 @@ def handle_action(table_choice, action_choice, connection, cursor):
         elif action_choice == "2":
             view_clothing_types(cursor)
         elif action_choice == "3":
-            print("Update not available for clothing types.")
+            update_clothing_type(connection, cursor)
         elif action_choice == "4":
             delete_clothing_type(connection, cursor)
 
@@ -73,15 +65,19 @@ def run_app(connection, cursor):
             print("Exiting the application. Goodbye!")
 
         elif table_choice in ["1", "2", "3", "4"]:
-            action_choice = get_choice("Select Table:", [
-                "1. Add",
-                "2. View",
-                "3. Update",
-                "4. Delete",
-                "5. Back to Main Menu"
-            ])
+            action_choice = ""
+            while action_choice != "5":
+                action_choice = get_choice("Select an option:", [
+                    "1. Add",
+                    "2. View",
+                    "3. Update",
+                    "4. Delete",
+                    "5. Back to Main Menu"
+                ])
 
-            if action_choice == "5":
+                if action_choice == "5":
+                    break
+
                 handle_action(table_choice, action_choice, connection, cursor)
         else:
             print("Invalid choice. Please select a valid option.")
