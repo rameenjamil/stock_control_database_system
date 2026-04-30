@@ -1,5 +1,5 @@
 import sqlite3
-from utility import get_choice, is_valid_name
+from utility import get_choice, is_valid_name, error, warning, success
 from view import view_categories, view_suppliers, view_products, view_clothing_types
 
 
@@ -8,7 +8,7 @@ def select_from_table(cursor, table, id_col, name_col):
     rows = cursor.fetchall()
 
     if not rows:
-        print(f"\nNo records found in {table.replace('_', ' ')}.")
+        error(f"\nNo records found in {table.replace('_', ' ')}.")
         return None
 
     print(f"\nSelect {table.replace('_', ' ').title()} (0 to cancel):")
@@ -30,10 +30,10 @@ def select_from_table(cursor, table, id_col, name_col):
             if 1 <= number <= len(rows):
                 choice = number
             else:
-                print("Invalid choice. Please select from the list.")
+                error("Invalid choice. Please select from the list.")
 
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            error("Invalid input. Please enter a number.")
 
     return rows[choice - 1][0]
 
@@ -61,7 +61,7 @@ def add_product(connection, cursor):
     name = input("Enter product name: ").strip()
 
     if not name or not is_valid_name(name):
-        print("Invalid product name. Please enter a valid name.")
+        error("Invalid product name. Please enter a valid name.")
         return
 
     size = input("Enter product size: ").strip()
@@ -70,7 +70,7 @@ def add_product(connection, cursor):
         quantity = int(input("Enter product quantity: "))
         price = float(input("Enter product price: "))
     except ValueError:
-        print("Invalid input. Please enter the correct datatype.")
+        error("Invalid input. Please enter the correct datatype.")
         return
 
     cursor.execute("""
@@ -79,7 +79,7 @@ def add_product(connection, cursor):
     """, (name, size, quantity, price, category_id, supplier_id, type_id))
 
     connection.commit()
-    print(f"\nProduct added successfully.")
+    success(f"\nProduct added successfully.")
 
 
 def add_category(connection, cursor):
@@ -90,21 +90,21 @@ def add_category(connection, cursor):
     category_name = input("Enter category name: ").strip()
 
     if not category_name or not is_valid_name(category_name):
-        print("Invalid category name. Please enter a valid name.")
+        error("Invalid category name. Please enter a valid name.")
         return
 
     # checking for duplicates
     cursor.execute(
         "SELECT 1 FROM category WHERE category_name = ?", (category_name,))
     if cursor.fetchone():
-        print("Category already exists.")
+        warning("Category already exists.")
         return
 
     cursor.execute("INSERT INTO category (category_name) VALUES (?)",
                    (category_name,))  # comma is needed because it is a tuple
 
     connection.commit()
-    print(f"\nCategory added successfully.")
+    success(f"\nCategory added successfully.")
 
 
 def add_supplier(connection, cursor):
@@ -116,21 +116,21 @@ def add_supplier(connection, cursor):
     contact_info = input("Enter contact info: ").strip()
 
     if not supplier_name or not is_valid_name(supplier_name):
-        print("Invalid supplier name.")
+        error("Invalid supplier name.")
         return
 
     # checking for duplicates
     cursor.execute(
         "SELECT 1 FROM supplier WHERE supplier_name = ?", (supplier_name,))
     if cursor.fetchone():
-        print("Supplier already exists.")
+        warning("Supplier already exists.")
         return
 
     cursor.execute("INSERT INTO supplier (supplier_name, contact_info)VALUES (?, ?)",
                    (supplier_name, contact_info))
 
     connection.commit()
-    print("\nSupplier added successfully.")
+    success("\nSupplier added successfully.")
 
 
 def add_clothing_type(connection, cursor):
@@ -140,14 +140,14 @@ def add_clothing_type(connection, cursor):
     type_name = input("Enter clothing type name: ").strip()
 
     if not type_name:
-        print("Clothing type name cannot be empty.")
+        error("Clothing type name cannot be empty.")
         return
 
     # checking for duplicates
     cursor.execute(
         "SELECT 1 FROM clothing_type WHERE type_name = ?", (type_name,))
     if cursor.fetchone():
-        print("Clothing type already exists.")
+        warning("Clothing type already exists.")
         return
 
     cursor.execute("""
@@ -156,7 +156,7 @@ def add_clothing_type(connection, cursor):
     """, (type_name,))
 
     connection.commit()
-    print("\nClothing type added successfully.")
+    success("\nClothing type added successfully.")
 
 
 def update_product(connection, cursor):
@@ -195,7 +195,7 @@ def update_product(connection, cursor):
                 input(f"Enter new {label.lower()}: ").strip())
             valid = True
         except ValueError:
-            print("Invalid input type.")
+            error("Invalid input type.")
 
     cursor.execute(
         f"UPDATE product SET {column} = ? WHERE product_id = ?",
@@ -203,14 +203,14 @@ def update_product(connection, cursor):
     )
 
     connection.commit()
-    print("Product updated successfully.")
+    success("Product updated successfully.")
 
     # fetch updated record to show user
     cursor.execute("SELECT * FROM product WHERE product_id = ?", (product_id,))
     updated = cursor.fetchone()
 
     if updated:
-        print("\nUpdated Product:")
+        warning("\nUpdated Product:")
         print(f"""
         ID: {updated[0]}
         Name: {updated[1]}
@@ -233,19 +233,19 @@ def update_category(connection, cursor):
 
     new_name = input("Enter new category name: ").strip()
     if not new_name:
-        print("Category name cannot be empty.")
+        error("Category name cannot be empty.")
         return
 
     cursor.execute(
         "SELECT 1 FROM category WHERE category_name = ?", (new_name,))
     if cursor.fetchone():
-        print("Category name already exists.")
+        warning("Category name already exists.")
         return
 
     cursor.execute("UPDATE category SET category_name = ? WHERE category_id = ?",
                    (new_name, category_id))
     connection.commit()
-    print("Category updated successfully.")
+    success("Category updated successfully.")
     view_categories(cursor)
 
 
@@ -260,7 +260,7 @@ def update_supplier(connection, cursor):
     if supplier_id is None:
         return
 
-    print("""
+    warning("""
         What would you like to update?
         1. Name
         2. Contact Info
@@ -270,12 +270,12 @@ def update_supplier(connection, cursor):
     if choice == "1":
         new_value = input("Enter new supplier name: ").strip()
         if not new_value:
-            print("Supplier name cannot be empty.")
+            error("Supplier name cannot be empty.")
             return
         cursor.execute(
             "SELECT 1 FROM supplier WHERE supplier_name = ?", (new_value,))
         if cursor.fetchone():
-            print("Supplier already exists.")
+            warning("Supplier already exists.")
             return
         column = "supplier_name"
 
@@ -284,13 +284,13 @@ def update_supplier(connection, cursor):
         column = "contact_info"
 
     else:
-        print("Invalid choice.")
+        error("Invalid choice.")
         return
 
     cursor.execute(f"UPDATE supplier SET {column} = ? WHERE supplier_id = ?",
                    (new_value, supplier_id))
     connection.commit()
-    print("Supplier updated successfully.")
+    success("Supplier updated successfully.")
     view_suppliers(cursor)
 
 
@@ -307,23 +307,23 @@ def update_clothing_type(connection, cursor):
 
     type_name = input("Enter new clothing type name: ").strip()
     if not type_name:
-        print("Clothing type name cannot be empty.")
+        error("Clothing type name cannot be empty.")
         return
 
     if not is_valid_name(type_name):
-        print("Invalid clothing type name.")
+        error("Invalid clothing type name.")
         return
 
     cursor.execute(
         "SELECT 1 FROM clothing_type WHERE type_name = ?", (type_name,))
     if cursor.fetchone():
-        print("Clothing type already exists.")
+        warning("Clothing type already exists.")
         return
 
     cursor.execute(
         "UPDATE clothing_type SET type_name = ? WHERE type_id = ?", (type_name, type_id))
     connection.commit()
-    print("Clothing type updated successfully.")
+    success("Clothing type updated successfully.")
     view_clothing_types(cursor)
 
 
@@ -339,11 +339,11 @@ def delete_product(connection, cursor):
         cursor.execute(
             "DELETE FROM product WHERE product_id = ?", (product_id,))
         connection.commit()
-        print("Product deleted successfully.")
+        success("Product deleted successfully.")
         view_products(cursor)
 
     else:
-        print("Deletion cancelled.")
+        error("Deletion cancelled.")
 
 
 def delete_category(connection, cursor):
@@ -362,12 +362,12 @@ def delete_category(connection, cursor):
             cursor.execute(
                 "DELETE FROM category WHERE category_id = ?", (category_id,))
             connection.commit()
-            print("Category deleted successfully.")
+            success("Category deleted successfully.")
             view_categories(cursor)
         except sqlite3.IntegrityError:
-            print("Cannot delete category. It is used by existing products.")
+            warning("Cannot delete category. It is used by existing products.")
     else:
-        print("Deletion cancelled.")
+        error("Deletion cancelled.")
 
 
 def delete_supplier(connection, cursor):
@@ -385,13 +385,13 @@ def delete_supplier(connection, cursor):
             cursor.execute(
                 "DELETE FROM supplier WHERE supplier_id = ?", (supplier_id,))
             connection.commit()
-            print("Supplier deleted successfully.")
+            success("Supplier deleted successfully.")
             view_suppliers(cursor)
         except sqlite3.IntegrityError:
-            print(f"Cannot delete the supplier. It is used by existing products.")
+            warning(f"Cannot delete the supplier. It is used by existing products.")
 
     else:
-        print("Deletion cancelled.")
+        error("Deletion cancelled.")
 
 
 def delete_clothing_type(connection, cursor):
@@ -410,10 +410,10 @@ def delete_clothing_type(connection, cursor):
             cursor.execute(
                 "DELETE FROM clothing_type WHERE type_id = ?", (type_id,))
             connection.commit()
-            print("Clothing type deleted successfully.")
+            success("Clothing type deleted successfully.")
             view_clothing_types(cursor)
         except sqlite3.IntegrityError:
-            print("Cannot delete clothing type. It is used by existing products.")
+            warning("Cannot delete clothing type. It is used by existing products.")
 
     else:
-        print("Deletion cancelled.")
+        error("Deletion cancelled.")

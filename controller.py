@@ -3,7 +3,9 @@ from crud import (add_product, add_category, add_supplier, add_clothing_type, up
                   delete_product, delete_category, delete_supplier, delete_clothing_type, update_supplier)
 from view import (view_products, view_categories,
                   view_suppliers, view_clothing_types)
-from utility import get_choice
+from utility import get_choice, warning, error
+
+from reports import show_reports_menu
 
 
 def handle_action(table_choice, action_choice, connection, cursor):
@@ -49,20 +51,25 @@ def handle_action(table_choice, action_choice, connection, cursor):
 
 
 def run_app(connection, cursor):
-    print(f"{"="*40}\nWelcome to the Stock Control Database!\n{"="*40}")
+    warning(f"{"="*40}\nWelcome to the Stock Control Database!\n{"="*40}")
 
     table_choice = ""
 
-    while table_choice != "5":
+    while table_choice != "0":
         table_choice = get_choice("Select table:", [
             "1. Product",
             "2. Category",
             "3. Supplier",
             "4. Clothing Type",
-            "5. Exit"])
+            "5. Reports",
+            "0. Exit"])
 
-        if table_choice == "5":
-            print("Exiting the application. Goodbye!")
+        if table_choice == "0":
+            warning("Exiting the application. Goodbye!")
+            break
+
+        elif table_choice == "5":
+            show_reports_menu(cursor)
 
         elif table_choice in ["1", "2", "3", "4"]:
             action_choice = ""
@@ -80,4 +87,4 @@ def run_app(connection, cursor):
 
                 handle_action(table_choice, action_choice, connection, cursor)
         else:
-            print("Invalid choice. Please select a valid option.")
+            error("Invalid choice. Please select a valid option.")

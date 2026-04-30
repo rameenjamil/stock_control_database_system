@@ -1,4 +1,4 @@
-from utility import print_table
+from utility import print_table, warning, error
 
 
 def view_categories(cursor):
@@ -6,10 +6,10 @@ def view_categories(cursor):
     rows = cursor.fetchall()
 
     if not rows:
-        print("\nNo categories found.")
+        error("\nNo categories found.")
         return
 
-    print("\nCategories:")
+    warning("\nCategories:")
 
     headers = ["ID", "Name"]
     widths = [5, 20]
@@ -23,10 +23,10 @@ def view_suppliers(cursor):
     rows = cursor.fetchall()
 
     if not rows:
-        print("\nNo suppliers found.")
+        error("\nNo suppliers found.")
         return
 
-    print("\nSuppliers:")
+    warning("\nSuppliers:")
     headers = ["ID", "Name", "Contact Info"]
     widths = [5, 20, 30]
     print_table(headers, rows, widths)
@@ -51,10 +51,10 @@ def view_products(cursor):
 
     rows = cursor.fetchall()
     if not rows:
-        print("\nNo products found.")
+        error("\nNo products found.")
         return
 
-    print("\nProducts:")
+    warning("\nProducts:")
     headers = ["ID", "Name", "Size", "Quantity",
                "Price", "Category", "Supplier", "Type"]
     widths = [5, 20, 10, 10, 10, 20, 20, 20]
@@ -65,10 +65,10 @@ def view_clothing_types(cursor):
     cursor.execute("SELECT type_id, type_name FROM clothing_type")
     rows = cursor.fetchall()
     if not rows:
-        print("\nNo clothing type found.")
+        error("\nNo clothing type found.")
         return
 
-    print("\nClothing Types:")
+    warning("\nClothing Types:")
     headers = ["ID", "Name"]
     widths = [5, 20]
     print_table(headers, rows, widths)

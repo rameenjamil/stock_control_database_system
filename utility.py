@@ -1,4 +1,5 @@
 import textwrap
+from colorama import Fore, Style
 
 
 def get_choice(prompt, options):
@@ -15,7 +16,7 @@ def get_choice(prompt, options):
     while choice not in valid_choices:
         choice = input("Choose an option: ").strip()
         if choice not in valid_choices:
-            print("Invalid choice. Please select a valid option.")
+            error("Invalid choice. Please select a valid option.")
     return choice
 
 
@@ -49,3 +50,15 @@ def print_table(headers, rows, widths):
             value = format_cell(row[i], widths[i])
             row_line += f"{value:<{widths[i]}}"
         print(row_line)
+
+
+def success(msg):
+    print(Fore.GREEN + msg + Style.RESET_ALL)
+
+
+def error(msg):
+    print(Fore.RED + msg + Style.RESET_ALL)
+
+
+def warning(msg):
+    print(Fore.YELLOW + msg + Style.RESET_ALL)
