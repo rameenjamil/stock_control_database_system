@@ -1,7 +1,35 @@
+"""
+View module for displaying database records.
+
+This module contains functions responsible for retrieving and
+presenting formatted database information to the user. It separates
+data visualization from business logic and CRUD operations.
+
+Responsibilities:
+- Display categories
+- Display suppliers
+- Display products
+- Display clothing types
+- Format output consistently
+"""
+
 from utility import print_table, warning, error
 
 
 def view_categories(cursor):
+    """
+Displays all category records in a formatted table.
+
+This function retrieves category information from the database
+and presents it in a structured and readable format.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute("SELECT category_id, category_name FROM category")
     rows = cursor.fetchall()
 
@@ -18,6 +46,19 @@ def view_categories(cursor):
 
 
 def view_suppliers(cursor):
+    """
+Displays all supplier records in a formatted table.
+
+This function retrieves supplier names and contact information
+from the database and displays them in an organized layout.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute(
         "SELECT supplier_id, supplier_name, contact_info FROM supplier")
     rows = cursor.fetchall()
@@ -33,6 +74,20 @@ def view_suppliers(cursor):
 
 
 def view_products(cursor):
+    """
+Displays all product records with related database information.
+
+This function retrieves products along with their associated
+category, supplier, and clothing type using SQL joins. The
+results are displayed in a formatted table for easy reading.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute("""
                    SELECT
                    product.product_id,
@@ -62,6 +117,18 @@ def view_products(cursor):
 
 
 def view_clothing_types(cursor):
+    """
+Displays all clothing type records.
+
+This function retrieves clothing type data from the database
+and prints it in a simple tabular format.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     cursor.execute("SELECT type_id, type_name FROM clothing_type")
     rows = cursor.fetchall()
     if not rows:

@@ -1,7 +1,37 @@
+"""
+Reports and analytics module for the Stock Control Database application.
+
+This module is responsible for generating inventory reports,
+summary statistics, and analytical views of the database records.
+It provides insights into stock levels, product distribution,
+and supplier-related information.
+
+Responsibilities:
+- Generate stock reports
+- Display inventory summaries
+- Analyze database information
+- Provide formatted reporting output
+- Support business decision-making
+"""
+
 from utility import print_table, get_choice, warning, error, success
 
 
 def report_total_value(cursor):
+    """
+Calculates and displays the total value of all stock inventory.
+
+This function retrieves the total inventory value by multiplying
+product quantities by their corresponding prices and summing the
+results. The calculated stock value is then displayed to the user.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute("SELECT SUM(quantity * price) FROM product")
     result = cursor.fetchone()
 
@@ -12,6 +42,20 @@ def report_total_value(cursor):
 
 
 def report_products_per_category(cursor):
+    """
+Generates a report showing the number of products in each category.
+
+This function retrieves category names and counts the products
+assigned to each category using SQL aggregation. The results
+are displayed in a formatted table for easy analysis.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute("""
         SELECT category.category_name, COUNT(*)
         FROM product
@@ -33,6 +77,20 @@ def report_products_per_category(cursor):
 
 
 def report_low_stock(cursor):
+    """
+Displays products with low stock quantities.
+
+This function retrieves all products whose quantity is below
+the low-stock threshold value and presents them in a formatted
+table to assist with inventory monitoring and restocking.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     cursor.execute("""
         SELECT name, quantity
         FROM product
@@ -53,6 +111,21 @@ def report_low_stock(cursor):
 
 
 def show_reports_menu(cursor):
+    """
+Displays and manages the reports menu interface.
+
+This function presents the available reporting options to the user,
+processes menu selections, and calls the corresponding report
+generation functions until the user chooses to return to the
+previous menu.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
+
     choice = ""
 
     while choice != "0":

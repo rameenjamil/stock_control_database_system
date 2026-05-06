@@ -1,9 +1,42 @@
+"""
+CRUD operations module for the Stock Control Database application.
+
+This module contains all Create, Read, Update, and Delete operations
+for products, categories, suppliers, and clothing types. It manages
+user input validation, database transactions, and data integrity.
+
+Responsibilities:
+- Insert new records into the database
+- Update existing records
+- Delete records safely
+- Validate user input
+- Handle database transactions
+- Provide interactive selection menus
+"""
+
 import sqlite3
 from utility import get_choice, is_valid_name, error, warning, success
 from view import view_categories, view_suppliers, view_products, view_clothing_types
 
 
 def select_from_table(cursor, table, id_col, name_col):
+    """
+Displays records from a database table and allows the user to select one.
+
+This helper function retrieves IDs and display names from the specified
+table, presents them as a numbered list, and returns the selected record ID.
+It is commonly used in update and delete operations.
+
+Args:
+    cursor: SQLite cursor object used for executing queries.
+    table (str): Name of the database table.
+    id_col (str): Name of the ID column.
+    name_col (str): Name of the display column.
+
+Returns:
+    int | None:
+        Returns the selected record ID, or None if the user cancels.
+"""
     cursor.execute(f"SELECT {id_col}, {name_col} FROM {table}")
     rows = cursor.fetchall()
 
@@ -40,9 +73,20 @@ def select_from_table(cursor, table, id_col, name_col):
 
 def add_product(connection, cursor):
     """
-    Adds a new product to the database using user-friendly selection
-    for category, supplier, and clothing type.
-    """
+Adds a new product record to the database.
+
+This function collects product information from the user, validates
+all required inputs, and inserts the new product into the product table.
+It also allows the user to select related category, supplier, and
+clothing type records.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     category_id = select_from_table(
         cursor, "category", "category_id", "category_name")
     if category_id is None:
@@ -84,8 +128,18 @@ def add_product(connection, cursor):
 
 def add_category(connection, cursor):
     """
-    Adds a new category to the database with input validation.
-    """
+Adds a new category to the database.
+
+This function validates the category name, checks for duplicate entries,
+and inserts the category into the database if the input is valid.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
 
     category_name = input("Enter category name: ").strip()
 
@@ -109,8 +163,19 @@ def add_category(connection, cursor):
 
 def add_supplier(connection, cursor):
     """
-    Adds a new supplier to the database with input validation.
-    """
+Adds a new supplier record to the database.
+
+This function collects supplier information, validates the input,
+checks for duplicate supplier names, and stores the new supplier
+in the supplier table.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
 
     supplier_name = input("Enter supplier name: ").strip()
     contact_info = input("Enter contact info: ").strip()
@@ -135,8 +200,18 @@ def add_supplier(connection, cursor):
 
 def add_clothing_type(connection, cursor):
     """
-    Adds a new clothing type to the database with input validation.
-    """
+Adds a new clothing type to the database.
+
+This function validates the clothing type name, ensures no duplicate
+records exist, and inserts the new clothing type into the database.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     type_name = input("Enter clothing type name: ").strip()
 
     if not type_name:
@@ -161,8 +236,19 @@ def add_clothing_type(connection, cursor):
 
 def update_product(connection, cursor):
     """
-    Updates a selected field of a product.
-    """
+Updates a selected field of an existing product.
+
+This function allows the user to select a product and modify one
+of its editable attributes such as name, size, quantity, or price.
+The updated information is saved immediately to the database.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_products(cursor)
 
     product_id = select_from_table(cursor, "product", "product_id", "name")
@@ -221,9 +307,19 @@ def update_product(connection, cursor):
 
 def update_category(connection, cursor):
     """
-    Updates the name of a category.
+Updates the name of an existing category.
 
-    """
+This function displays available categories, allows the user to
+select one, validates the new category name, and updates the record
+in the database.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_categories(cursor)
 
     category_id = select_from_table(
@@ -251,8 +347,19 @@ def update_category(connection, cursor):
 
 def update_supplier(connection, cursor):
     """
-    Updates the name and contact info of a supplier.
-    """
+Updates supplier information in the database.
+
+This function allows the user to modify either the supplier name
+or the supplier contact information. Input validation and duplicate
+checks are performed where necessary.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_suppliers(cursor)
 
     supplier_id = select_from_table(
@@ -296,8 +403,18 @@ def update_supplier(connection, cursor):
 
 def update_clothing_type(connection, cursor):
     """
-    Updates the name of a clothing type.
-    """
+Updates the name of an existing clothing type.
+
+This function allows the user to select a clothing type, validate
+a new name, and apply the update to the database.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_clothing_types(cursor)
 
     type_id = select_from_table(
@@ -328,6 +445,20 @@ def update_clothing_type(connection, cursor):
 
 
 def delete_product(connection, cursor):
+    """
+Deletes a product record from the database.
+
+This function displays available products, allows the user to select
+one for deletion, and requests confirmation before permanently removing
+the product record.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_products(cursor)
     product_id = select_from_table(cursor, "product", "product_id", "name")
     if product_id is None:
@@ -347,6 +478,20 @@ def delete_product(connection, cursor):
 
 
 def delete_category(connection, cursor):
+    """
+Deletes a category record from the database.
+
+This function allows the user to select a category for deletion and
+handles potential database integrity errors caused by foreign key
+constraints.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_categories(cursor)
 
     category_id = select_from_table(
@@ -371,6 +516,20 @@ def delete_category(connection, cursor):
 
 
 def delete_supplier(connection, cursor):
+    """
+Deletes a supplier record from the database.
+
+This function displays available suppliers, confirms the deletion,
+and safely removes the selected supplier while handling database
+constraint errors.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_suppliers(cursor)
 
     supplier_id = select_from_table(
@@ -395,6 +554,20 @@ def delete_supplier(connection, cursor):
 
 
 def delete_clothing_type(connection, cursor):
+    """
+Deletes a clothing type record from the database.
+
+This function allows the user to remove a clothing type after
+confirmation. Database integrity checks are handled to prevent
+invalid deletions.
+
+Args:
+    connection: Active SQLite database connection object.
+    cursor: SQLite cursor object used for executing queries.
+
+Returns:
+    None
+"""
     view_clothing_types(cursor)
 
     type_id = select_from_table(
